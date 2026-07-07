@@ -100,6 +100,10 @@ def withdraw_post():
     if error:
         flash(error, "danger")
         return redirect(url_for("account.withdraw_get"))
+    balance = get_balance(session["user_id"])
+    if amount > balance:
+        flash("Insufficient funds", "danger")
+        return redirect(url_for("account.withdraw_get"))
     result = withdraw(session["user_id"], amount)
     if result == "success":
         flash(f"Withdrawal of ${amount:,.2f} was successful.", "success")
