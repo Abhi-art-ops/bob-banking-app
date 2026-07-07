@@ -1,0 +1,75 @@
+# banking-app-ci.yml
+#
+# CI pipeline for the SecureBank Flask application.
+#
+# Triggers:
+#   - Every push to the main branch
+#   - Every pull request targeting the main branch
+#
+# Steps:
+#   1. Check out source code
+#   2. Set up Python 3.12
+#   3. Install project dependencies
+#   4. Initialise the SQLite database with seed data
+#   5. Run the full pytest test suite (50 tests)
+#
+# The pipeline reports a pass when all 50 tests pass and a fail
+# if any test fails, preventing broken code from being merged.
+
+name: Banking App CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run Test Suite (Python 3.12)
+    runs-on: ubuntu-latest
+
+    steps:
+      # -----------------------------------------------------------------------
+      # 1. Check out the repository code
+      # -----------------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # -----------------------------------------------------------------------
+      # 2. Set up the specified Python version
+      # -----------------------------------------------------------------------
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # -----------------------------------------------------------------------
+      # 3. Install dependencies
+      #    pip cache is used to speed up subsequent runs
+      # -----------------------------------------------------------------------
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r BACKEND/requirements.txt
+
+      # -----------------------------------------------------------------------
+      # 4. Initialise the SQLite database
+      #    Creates banking.db and seeds the two test customers.
+      #    The integration tests use their own temporary databases, so this
+      #    step exists only to verify that init_db.py itself runs cleanly.
+      # -----------------------------------------------------------------------
+      - name: Initialise database
+        working-directory: BACKEND
+        run: python database/init_db.py
+
+      # -----------------------------------------------------------------------
+      # 5. Run the full pytest test suite
+      #    -v  verbose output so each test name is printed
+      #    --tb=short  compact traceback on failures
+      # -----------------------------------------------------------------------
+      - name: Run tests
+        working-directory: BACKEND
+        run: pytest tests/ -v --tb=short
