@@ -96,9 +96,19 @@ def withdraw_get():
 @login_required
 def withdraw_post():
     raw_amount = request.form.get("amount", "")
-    amount, error = _parse_amount(raw_amount)
-    if error:
-        flash(error, "danger")
+    if not raw_amount or not raw_amount.strip():
+        flash("Amount is required", "danger")
+        return redirect(url_for("account.withdraw_get"))
+    try:
+        amount = float(raw_amount.strip())
+    except ValueError:
+        amount = None
+    if amount is None or amount <= 0:
+        flash("Amount must be greater than zero", "danger")
+        return redirect(url_for("account.withdraw_get"))
+    balance = get_balance(session["user_id"])
+    if amount > balance:
+        flash("Insufficient funds", "danger")
         return redirect(url_for("account.withdraw_get"))
     result = withdraw(session["user_id"], amount)
     if result == "success":
