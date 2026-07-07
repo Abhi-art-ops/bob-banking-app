@@ -34,15 +34,17 @@ jobs:
     steps:
       # -----------------------------------------------------------------------
       # 1. Check out the repository code
+      #    actions/checkout@v4.2.2 — targets Node.js 24 (fixes Node 20 warning)
       # -----------------------------------------------------------------------
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       # -----------------------------------------------------------------------
       # 2. Set up the specified Python version
+      #    actions/setup-python@v5.6.0 — targets Node.js 24 (fixes Node 20 warning)
       # -----------------------------------------------------------------------
       - name: Set up Python 3.12
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v5.6.0
         with:
           python-version: "3.12"
 
