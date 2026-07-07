@@ -23,7 +23,7 @@
             <label for="amount" class="form-label fw-semibold"><i class="bi bi-currency-dollar me-1"></i>Withdrawal Amount (USD)</label>
             <div class="input-group input-group-lg">
               <span class="input-group-text bg-warning text-dark fw-bold">$</span>
-              <input type="number" class="form-control" id="amount" name="amount" placeholder="0.00" min="0.01" step="0.01" {% if balance is not none %}max="{{ balance }}"{% endif %} required autofocus />
+              <input type="text" class="form-control" id="amount" name="amount" placeholder="0.00" required autofocus />
             </div>
             <div class="form-text text-muted">Enter a positive value up to your available balance.</div>
           </div>
