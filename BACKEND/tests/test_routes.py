@@ -28,8 +28,8 @@ def _build_test_db(db_path: str) -> None:
     conn.execute("PRAGMA foreign_keys = ON")
     conn.executescript("""
         CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL);
-        CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL UNIQUE, balance REAL NOT NULL DEFAULT 0.0, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE);
-        CREATE TABLE IF NOT EXISTS transactions (id INTEGER PRIMARY KEY AUTOINCREMENT, account_id INTEGER NOT NULL, type TEXT NOT NULL CHECK(type IN ('deposit','withdrawal')), amount REAL NOT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE);
+        CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL UNIQUE, balance REAL NOT NULL DEFAULT 0.0, FOREIGN KEY (user_id) REFERENCES users(id) ON[...]
+        CREATE TABLE IF NOT EXISTS transactions (id INTEGER PRIMARY KEY AUTOINCREMENT, account_id INTEGER NOT NULL, type TEXT NOT NULL CHECK(type IN ('deposit','withdrawal')), amount REAL NOT NULL[...]
     """)
     conn.execute("INSERT INTO users (username, password) VALUES (?, ?)", ("testuser", generate_password_hash("testpass")))
     conn.execute("INSERT INTO accounts (user_id, balance) VALUES (?, ?)", (1, 2000.00))
@@ -55,10 +55,11 @@ class BaseTestCase(unittest.TestCase):
 
     def setUp(self):
         self.client = self.app.test_client()
-        self.client.__enter__()
+        self.app_context = self.app.app_context()
+        self.app_context.push()
 
     def tearDown(self):
-        self.client.__exit__(None, None, None)
+        self.app_context.pop()
 
     def _login(self, username="testuser", password="testpass"):
         return self.client.post("/login", data={"username": username, "password": password}, follow_redirects=True)
