@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Deposit Funds - SecureBank{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-center" style="min-height: calc(100vh - 80px);">
+  <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+    <div class="card rounded-3">
+      <div class="card-header bg-success text-white py-3">
+        <h4 class="mb-0 text-center"><i class="bi bi-plus-circle-fill me-2"></i>Deposit Funds</h4>
+      </div>
+      <div class="card-body p-4">
+        <div class="alert alert-success d-flex align-items-center mb-4 py-2" role="alert">
+          <i class="bi bi-info-circle-fill me-2 flex-shrink-0"></i>
+          <div class="small">Enter the amount you wish to deposit. Minimum deposit: <strong>$0.01</strong>.</div>
+        </div>
+        <form method="POST" action="{{ url_for('account.deposit_post') }}" novalidate>
+          <div class="mb-4">
+            <label for="amount" class="form-label fw-semibold"><i class="bi bi-currency-dollar me-1"></i>Deposit Amount (USD)</label>
+            <div class="input-group input-group-lg">
+              <span class="input-group-text bg-success text-white fw-bold">$</span>
+              <input type="number" class="form-control" id="amount" name="amount" placeholder="0.00" min="0.01" step="0.01" required autofocus />
+            </div>
+            <div class="form-text text-muted">Enter a positive value with up to 2 decimal places (e.g., 250.00).</div>
+          </div>
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-success btn-lg"><i class="bi bi-check-circle me-2"></i>Confirm Deposit</button>
+            <a href="{{ url_for('account.dashboard') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Dashboard</a>
+          </div>
+        </form>
+      </div>
+    </div>
+    <p class="text-center text-muted small mt-3"><i class="bi bi-shield-lock me-1"></i>Your transaction is secured with end-to-end encryption.</p>
+  </div>
+</div>
+{% endblock %}
